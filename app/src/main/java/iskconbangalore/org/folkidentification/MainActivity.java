@@ -3,6 +3,7 @@ package iskconbangalore.org.folkidentification;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static android.R.attr.permission;
@@ -136,6 +138,21 @@ public class MainActivity extends AppCompatActivity {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            thumbnail.setImageBitmap(imageBitmap);
+            String filename1 = filename.getText().toString()+".jpg";
+            File file = new File(Environment.getExternalStorageDirectory().getPath(), "/FolkIdentification/"+filename1);
+            Uri uri = Uri.fromFile(file);
+            Bitmap bitmap;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+               // bitmap = crupAndScale(bitmap, 300); // if you mind scaling
+                thumbnailgi.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
