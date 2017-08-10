@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                // bitmap = crupAndScale(bitmap, 300); // if you mind scaling
-                thumbnailgi.setImageBitmap(bitmap);
+                thumbnail.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
