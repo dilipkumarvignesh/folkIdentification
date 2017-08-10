@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
 //            final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
 //            File newdir = new File(dir);
 //            newdir.mkdirs();
+
+            final String dir = Environment.getExternalStorageDirectory()+"/FolkIdentification/";
+            File newdir = new File(dir);
+            newdir.mkdirs();
             File SD_CARD_PATH = Environment.getExternalStorageDirectory();
             count++;
             //String file = dir+count+".jpg";
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
             catch (IOException e)
             {
-                Toast.makeText(this, "No Permission to Create folder", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "No Permission to Create file", Toast.LENGTH_LONG).show();
             }
 
             Uri outputFileUri = Uri.fromFile(newfile);

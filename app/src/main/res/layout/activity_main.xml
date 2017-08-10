@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:text="Camera" />
         <ImageView
-            android:layout_width="500px"
-            android:layout_height="500px"
+            android:layout_width="800px"
+            android:layout_height="800px"
             android:id="@+id/idImage"/>
     </LinearLayout>
 
