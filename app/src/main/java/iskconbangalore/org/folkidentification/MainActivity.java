@@ -3,7 +3,7 @@ package iskconbangalore.org.folkidentification;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -19,10 +19,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
 
+import static android.R.attr.permission;
 public class MainActivity extends AppCompatActivity {
-
-
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
     int TAKE_PHOTO_CODE = 0;
     public static int count = 0;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -35,7 +40,13 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );}
         // Here, we are making a folder named picFolder to store
         // pics taken by the camera using this application.
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA)
@@ -43,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA},  MY_CAMERA_REQUEST_CODE);
         }
-        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
-        File newdir = new File(dir);
-        newdir.mkdirs();
+//        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+//        File newdir = new File(dir);
+//        newdir.mkdirs();
         thumbnail = (ImageView)findViewById(R.id.idImage);
         filename = (EditText)findViewById(R.id.filename);
         Button capture = (Button) findViewById(R.id.btnCapture);
@@ -84,31 +95,58 @@ public class MainActivity extends AppCompatActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             Log.d("info","Inside CameraCapture");
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+//            final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/picFolder/";
+//            File newdir = new File(dir);
+//            newdir.mkdirs();
+            File SD_CARD_PATH = Environment.getExternalStorageDirectory();
+            count++;
+            //String file = dir+count+".jpg";
+            String fin_file_name = filename.getText().toString();
+            String file = "/FolkIdentification/"+fin_file_name+".jpg";
+            File newfile = new File(SD_CARD_PATH,file);
+            try {
+                newfile.createNewFile();
+            }
+            catch (IOException e)
+            {
+                Toast.makeText(this, "No Permission to Create folder", Toast.LENGTH_LONG).show();
+            }
+
+            Uri outputFileUri = Uri.fromFile(newfile);
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
         }
         else
         {
             Toast.makeText(this, "Unable to Take Photo", Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       // super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.d("CameraDemo", "Pic saved");
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            thumbnail.setImageBitmap(imageBitmap);
+        }
     }
 
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == TAKE_PHOTO_CODE && resultCode == RESULT_OK) {
-//            Log.d("CameraDemo", "Pic saved");
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            thumbnail.setImageBitmap(imageBitmap);
 //        }
 //    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            thumbnail.setImageBitmap(imageBitmap);
-        }
-    }
 
     @Override
 
